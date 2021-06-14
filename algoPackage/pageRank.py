@@ -36,8 +36,8 @@ def algo_pagerank(G, weightInput, functionType, verbose, idDict=None):
         #print(calculation)
         for node in sorted(calculation.items(), key=lambda item: item[1], reverse=True):
             #value=[y for x,y in dict(sorted(calculation.items(), key=lambda item: item[1], reverse=True)) if x == node]
-            
-            print(str([x for x,y in idDict.items() if y == node[0]]) + " SCORE: " + str(node))
+            print(node)
+            #print(str([x for x,y in idDict.items() if y == node[0]]) + " SCORE: " + str(node))
             #print(str(G.nodes()[node[0]]) + " DEGREE: " + str(G.degree(node[0])))
             #print(str(G.nodes(node)) + " --- " + str(dict(sorted(calculation.get(node)))))
             i += 1
