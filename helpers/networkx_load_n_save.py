@@ -14,13 +14,9 @@ def import_node_link_data_to_graph(inputfile):
     json_data = json.loads(file_to_read.read())    
     return json_graph.node_link_graph(json_data, directed=True, multigraph=False)
 
-def export_graph_to_node_link_data(G,outputfile):
-    """Returns the class to use for empty undirected copies.
-
-        If you subclass the base classes, use this to designate
-        what directed class to use for `to_directed()` copies.
-    """
-    print("Exporting graph to node_link_data-file")
+def export_graph_to_node_link_data(G, outputfile, verbose):
+    if (verbose) :
+        print("Exporting graph to node_link_data-file")
     file_to_write = open(outputfile, 'w')
     file_to_write.write(json.dumps(json_graph.node_link_data(G)))
 #### NODELINKDATA
