@@ -15,7 +15,7 @@ def algo_pagerank(G, weightInput, functionType, verbose, idDict=None):
     start_time_all = time.time()
     if (weightInput != None):
         start_time = time.time()
-        calculation = nx.pagerank(G, alpha=0.85, max_iter=100, weight=weightinput)
+        calculation = nx.pagerank(G, alpha=0.85, max_iter=100, weight=weightInput)
         print("TIME: " + to_ms(time.time() - start_time) + " s.")
     else:
         if (functionType == "default"):
