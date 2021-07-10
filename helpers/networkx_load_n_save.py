@@ -8,7 +8,11 @@ import csv
 import networkx as nx
 from networkx.readwrite import json_graph
 
-def create_graph_from_neo4j_csv(G,filePath):
+def create_graph_from_neo4j_csv(filePath, inputDirectedData=True, outputDirectedGraph=True):
+    if (outputDirectedGraph):
+        G = nx.DiGraph()
+    else:
+        G = nx.Graph()
     with open(filePath,'r') as csv_file:
         reader = csv.DictReader(csv_file,quotechar = '"', delimiter=',')
         headerfields = list(reader.fieldnames)
@@ -27,9 +31,15 @@ def create_graph_from_neo4j_csv(G,filePath):
                 for i in range(index_first_edge_attribute, index_last_edge_attribute):
                     edgeAttributes[headerfields[i]] = line[headerfields[i]].replace(":","")
                 G.add_edges_from([(line['_start'],line['_end'], edgeAttributes)])
+                # Wenn die inputDaten nicht gerichtet sind aber der Graph gerichtet sein soll, dann noch eine zweite Kante hinzufügen in Rückrichtung.
+                # Wenn inputDaten hingegegen gerichtet sind, dann wird die Rückrichtung noch als Kante kommen und dann hinzugefügt werden.
+                # Das passiert aber auch nur, wenn der output als gerichtet gewünscht ist. Ansonsten ist G ja mit nx.Graph() erstellt worden
+                # und dann braucht es die Rückrichtung ja überhaupt nicht.
+                if not inputDirectedData and outputDirectedGraph:
+                    G.add_edges_from([(line['_end'],line['_start'], edgeAttributes)])
                 #G.add_edge(line['_start'],line['_end'],type=line['_type'],cost=float(line['cost']),count=int(line['count']),dice=line['dice'])
                 #G.add_edge(line['_end'],line['_start'],type=line['_type'],cost=float(line['cost']),count=int(line['count']),dice=line['dice']) 
-
+    return G
 #### NODELINKDATA
 def import_node_link_data_to_graph(inputfile):
     print("Importing Node Link Data")
