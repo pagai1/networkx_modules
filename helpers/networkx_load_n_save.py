@@ -4,8 +4,31 @@ Created on 19.05.2021
 @author: pagai
 '''
 import json
+import csv
 import networkx as nx
 from networkx.readwrite import json_graph
+
+def create_graph_from_neo4j_csv(G,filePath):
+    with open(filePath,'r') as csv_file:
+        reader = csv.DictReader(csv_file,quotechar = '"', delimiter=',')
+        headerfields = list(reader.fieldnames)
+        index_first_node_attribute = 1
+        index_last_node_attribute = (headerfields.index("_start", 1) - 1)
+        index_first_edge_attribute = (headerfields.index("_end", (index_last_node_attribute + 2)) + 1)
+        index_last_edge_attribute = (len(headerfields) - 1)
+        nodeAttributes = {}
+        edgeAttributes = {}
+        for line in reader:
+            if line['_id'] != "":
+                for i in range(index_first_node_attribute, index_last_node_attribute):
+                    nodeAttributes[headerfields[i]] = line[headerfields[i]].replace(":","")
+                G.add_nodes_from([(line['_id'], nodeAttributes)])
+            if line['_start'] != "":
+                for i in range(index_first_edge_attribute, index_last_edge_attribute):
+                    edgeAttributes[headerfields[i]] = line[headerfields[i]].replace(":","")
+                G.add_edges_from([(line['_start'],line['_end'], edgeAttributes)])
+                #G.add_edge(line['_start'],line['_end'],type=line['_type'],cost=float(line['cost']),count=int(line['count']),dice=line['dice'])
+                #G.add_edge(line['_end'],line['_start'],type=line['_type'],cost=float(line['cost']),count=int(line['count']),dice=line['dice']) 
 
 #### NODELINKDATA
 def import_node_link_data_to_graph(inputfile):
