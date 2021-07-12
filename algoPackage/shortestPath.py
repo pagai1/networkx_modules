@@ -23,9 +23,9 @@ def algo_all_pairs_bellman_ford_path(G, inputWeight=None, verbose=False):
             print(pathdict[key])
             break
     
-
-def algo_all_pairs_dijkstra(G, inputCutoff=None, inputWeight=None,verbose=False):
-    print("CALCULATING ALL PAIRS SHORTEST PATHS WITH DIJKSTRA...")
+def algo_all_pairs_dijkstra(G, inputCutoff=None, inputWeight=None, verbose=False):
+    if (verbose): 
+        print("CALCULATING ALL PAIRS SHORTEST PATHS WITH DIJKSTRA...")
     start_time = time.time()
     #for n, (dist, path) in nx.all_pairs_dijkstra(G):
     #    print(path[3])
@@ -48,8 +48,6 @@ def algo_all_pairs_dijkstra(G, inputCutoff=None, inputWeight=None,verbose=False)
                     print(f"{node1} - {node2}: {pathdict[node1][0][node2]}")
                 except (KeyError,Exception):
                     print("No shortest path between " + node1 + " and " + node2)
-        
-    
 
 def algo_shortest_path(G, startNode=None, endNode=None, nodeType=None, forceSubGraphCreation=False):
     if ((nodeType != None) & (forceSubGraphCreation)):
@@ -67,7 +65,7 @@ def algo_shortest_path(G, startNode=None, endNode=None, nodeType=None, forceSubG
     print("RUNTIME ShortestPath: " + str(path) + to_ms(time.time() - start_time_single) + "\n")
 
 
-def all_pairs_shortest_path(G,nodeTypeForSubGraph=None,verbose=False,inputWeight=None):
+def algo_all_pairs_shortest_path(G,nodeTypeForSubGraph=None,verbose=False,inputWeight=None):
     if (nodeTypeForSubGraph != None):
         if (verbose):
             print("CREATING SUBGRAPH FOR NODETYPE: " + nodeTypeForSubGraph)
@@ -78,16 +76,25 @@ def all_pairs_shortest_path(G,nodeTypeForSubGraph=None,verbose=False,inputWeight
     else:
         subG = G
     if (verbose):
-        print("Example: Calculating shortest path from anyone to anyone")
+        print("Calculating shortest path from anyone to anyone")
+    nodeList = G.nodes()
     start_time=time.time()
     paths = nx.shortest_path(subG, weight=inputWeight)
-    for path in paths:
-        print(path)
-    print("RUNTIME ShortestPath: " + to_ms(time.time() - start_time) )
-
+    endTime_path = (time.time()-start_time)
+    start_time=time.time()
+    for source in nodeList:
+        for target in nodeList:
+            try:
+                pathLength=nx.shortest_path_length(G, source, target, inputWeight)
+                if (verbose): 
+                    print(str(paths[source][target]) + " " +str(nx.shortest_path_length(G, source, target, inputWeight,method="bellman-ford")))
+            except (KeyError,Exception):
+                if (verbose):
+                    print("No shortest path between " + source + " and " + target)   
+    end_time=time.time()
+    print("RUNTIME allPairsShortestPath: " + str(subG.number_of_nodes()) + "," + str(subG.number_of_edges()) + "," + to_ms(endTime_path) + "," + to_ms(end_time - start_time) )
 
 def all_algo_shortest_path(G,nodeType=None,verbose=False,createSubgraph=False):
-        
     if ((nodeType != None)):
         print("CREATING SUBGRAPH FOR NODETYPE: " + nodeType)
         print(G.nodes(data=True))
