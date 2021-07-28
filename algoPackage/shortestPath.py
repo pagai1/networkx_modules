@@ -9,10 +9,34 @@ import time
 # import own helper-modules
 import sys
 import os
+import math
 sys.path.append(os.path.abspath(os.path.join(os.path.realpath(__file__),"../../networkx_modules")))
 from helpers.generalStuff import *
 
+def algo_shortest_path_astar(G, source, target, verbose=False):
+    def heuristic_distance(s,t):
+        sx = float(G.nodes[s]['x'])
+        sy = float(G.nodes[s]['y'])
+        tx = float(G.nodes[t]['x'])
+        ty = float(G.nodes[t]['y'])
+        return (math.sqrt(abs(sx-tx)**2 + abs(sy-ty) ** 2) ** 2)
+    
+    start_time=time.time()    
+    plz_list=nx.astar_path(G, str(source) , str(target), heuristic=heuristic_distance, weight="weight")
 
+    if (verbose):
+        print("RUNTIME SHORTESTPATH WITH ASTAR WAS : " + to_ms(time.time() - start_time) + " ms")
+        for bums in plz_list:
+            print(G.nodes(data=True)[bums]['name'])
+
+def algo_all_pairs_shortest_path_astar(G,verbose=False):
+    start_time=time.time()
+    nodeList = G.nodes()
+    for source in nodeList:
+        for target in nodeList:
+            algo_shortest_path_astar(G, source, target, verbose=verbose)
+    print("RUNTIME allPairsShortestPathAstar (Nodes,Edges,Runtime): " + str(G.number_of_nodes()) + "," + str(G.number_of_edges()) + "," + to_ms(time.time() - start_time))
+        
 def algo_all_pairs_bellman_ford_path(G, inputWeight=None, verbose=False):
     print("CALCULATING ALL PAIRS SHORTEST PATHS WITH BELLMAN FORD...")
     start_time = time.time()
@@ -51,7 +75,7 @@ def algo_all_pairs_dijkstra(G, inputCutoff=None, inputWeight=None, verbose=False
 
 def algo_shortest_path(G, startNode=None, endNode=None, nodeType=None, forceSubGraphCreation=False):
     if ((nodeType != None) & (forceSubGraphCreation)):
-        nodeList=[x for x,y in G.nodes(data=True) if y['type'] == nodeType]
+        nodeList=[x for x,y in G.nodes(data=True) if y['labels'] == nodeType]
         subG = G.subgraph(nodeList)
     else: 
         subG = G
@@ -71,7 +95,7 @@ def algo_all_pairs_shortest_path(G,nodeTypeForSubGraph=None,verbose=False,inputW
             print("CREATING SUBGRAPH FOR NODETYPE: " + nodeTypeForSubGraph)
             print("Graphdata:")
             print(G.nodes(data=True))
-        nodeList=[x for x,y in G.nodes(data=True) if y['label'] == nodeTypeForSubGraph]
+        nodeList=[x for x,y in G.nodes(data=True) if y['labels'] == nodeTypeForSubGraph]
         subG = G.subgraph(nodeList)
     else:
         subG = G
@@ -98,7 +122,7 @@ def all_algo_shortest_path(G,nodeType=None,verbose=False,createSubgraph=False):
     if ((nodeType != None)):
         print("CREATING SUBGRAPH FOR NODETYPE: " + nodeType)
         print(G.nodes(data=True))
-        nodeList=[x for x,y in G.nodes(data=True) if y['label'] == nodeType]
+        nodeList=[x for x,y in G.nodes(data=True) if y['labels'] == nodeType]
         subG = G.subgraph(nodeList)
         print(subG.nodes())
     else:
