@@ -14,12 +14,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.realpath(__file__),"../../n
 from helpers.generalStuff import *
 
 def algo_shortest_path_astar(G, source, target, verbose=False):
+    # Calculates the hypothenuse between 2 points in the coordinate system
     def heuristic_distance(s,t):
         sx = float(G.nodes[s]['x'])
         sy = float(G.nodes[s]['y'])
         tx = float(G.nodes[t]['x'])
         ty = float(G.nodes[t]['y'])
-        return (math.sqrt(abs(sx-tx)**2 + abs(sy-ty) ** 2) ** 2)
+        # Hypothenuse multiplied by 10000 to have a better weight in calculation. x.y < xxxx.y    
+        result = (math.sqrt(abs(sx-tx)**2 + abs(sy-ty) ** 2) * 10000) 
+        return result
     
     start_time=time.time()    
     plz_list=nx.astar_path(G, str(source) , str(target), heuristic=heuristic_distance, weight="weight")
@@ -34,8 +37,10 @@ def algo_all_pairs_shortest_path_astar(G,verbose=False):
     nodeList = G.nodes()
     for source in nodeList:
         for target in nodeList:
-            algo_shortest_path_astar(G, source, target, verbose=verbose)
-    print("RUNTIME allPairsShortestPathAstar (Nodes,Edges,Runtime): " + str(G.number_of_nodes()) + "," + str(G.number_of_edges()) + "," + to_ms(time.time() - start_time))
+            if source != target:
+                algo_shortest_path_astar(G, source, target, verbose=verbose)
+    end_time = time.time()
+    print("RUNTIME allPairsShortestPath aStar (Nodes,Edges,Runtime): " + str(G.number_of_nodes()) + "," + str(G.number_of_edges()) + "," + to_ms(end_time - start_time))
         
 def algo_all_pairs_bellman_ford_path(G, inputWeight=None, verbose=False):
     print("CALCULATING ALL PAIRS SHORTEST PATHS WITH BELLMAN FORD...")
@@ -46,7 +51,8 @@ def algo_all_pairs_bellman_ford_path(G, inputWeight=None, verbose=False):
         for key in pathdict.keys():
             print(pathdict[key])
             break
-    
+
+
 def algo_all_pairs_dijkstra(G, inputCutoff=None, inputWeight=None, verbose=False):
     if (verbose): 
         print("CALCULATING ALL PAIRS SHORTEST PATHS WITH DIJKSTRA...")
