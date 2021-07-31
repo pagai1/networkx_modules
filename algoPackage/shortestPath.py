@@ -13,7 +13,7 @@ import math
 sys.path.append(os.path.abspath(os.path.join(os.path.realpath(__file__),"../../networkx_modules")))
 from helpers.generalStuff import *
 
-def algo_shortest_path_astar(G, source, target, verbose=False):
+def algo_shortest_path_astar(G, source, target, verbose=True):
     # Calculates the hypothenuse between 2 points in the coordinate system
     def heuristic_distance(s,t):
         sx = float(G.nodes[s]['x'])
