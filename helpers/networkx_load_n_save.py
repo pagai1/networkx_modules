@@ -43,7 +43,7 @@ def create_graph_from_neo4j_csv(filePath, inputDirectedData=True, outputDirected
                 #G.add_edge(line['_end'],line['_start'],type=line['_type'],cost=float(line['cost']),count=int(line['count']),dice=line['dice']) 
     return G
 #### NODELINKDATA
-def import_node_link_data_to_graph(inputfile):
+def import_node_link_data_to_graph(inputfile, verbose=False):
     if (verbose):
         print("Importing Node Link Data")
     file_to_read = open(inputfile, 'r')
