@@ -24,12 +24,12 @@ def create_graph_from_neo4j_csv(filePath, inputDirectedData=True, outputDirected
         edgeAttributes = {}
         for line in reader:
             if line['_id'] != "":
-                for i in range(index_first_node_attribute, index_last_node_attribute):
+                for i in range(index_first_node_attribute, index_last_node_attribute + 1):
                     if (line[headerfields[i]] != ""):
                         nodeAttributes[headerfields[i]] = line[headerfields[i]].replace(":","")
                 G.add_nodes_from([(line['_id'], nodeAttributes)])
             if line['_start'] != "":
-                for i in range(index_first_edge_attribute, index_last_edge_attribute):
+                for i in range(index_first_edge_attribute, index_last_edge_attribute + 1):
                     if (line[headerfields[i]] != ""):
                         edgeAttributes[headerfields[i]] = line[headerfields[i]].replace(":","")
                 G.add_edges_from([(line['_start'],line['_end'], edgeAttributes)])
